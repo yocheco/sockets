@@ -1,0 +1,11 @@
+config:
+  target: "ws://localhost/"
+  socketio:
+    path: "/sockets/io"
+  phases:
+    - duration: 600
+      arrivalRate: 10
+scenarios:
+  - engine: "socketio"
+    flow:
+      - think: 30

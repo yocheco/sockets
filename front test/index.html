@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test font sockets</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.3.0/socket.io.js"></script>
+</head>
+<body>
+    Users Online: [<span id="online">0</span>] <br><br>
+    Total users: [<span id="users">0</span>] <br>
+    Total users server 0: [<span id="users0">0</span>] <br>
+    Total users server 1: [<span id="users1">0</span>] <br>
+</body>
+<script>
+    let online = 0;
+    let users = 0;
+    let users0 = 0;
+    let users1 = 0
+
+    const onlineDom = document.getElementById("online");
+    const usersDom = document.getElementById("users");
+    const users0Dom = document.getElementById("users0");
+    const users1Dom = document.getElementById("users1");
+
+    const socket = io("ws://localhost",{
+        path: '/sockets/io',
+        transports: ['websocket'],
+        //autoConnect: true, //try code!!!!!!
+    });
+
+    //escuchar cuando se conecte un usuario
+    socket.on('url',(data)=>{
+        console.log(data);
+    });
+
+    //escuchar cuando se conecte un usuario
+    socket.on('upgrade',(data)=>{
+        let numberServer = data.numServer;
+        console.log(numberServer);
+        addUser(numberServer);
+    });
+
+    //escuchar cuando se desconecte un usuario
+    socket.on('downgrade',(data)=>{
+        let numberServer = data.numServer;
+        console.log(numberServer);
+        deleteUser();
+    });
+
+    function addUser(nServer){
+        online++;
+        users++;
+        (nServer === '0') ? users0++ : users1++
+        onlineDom.innerHTML = online;
+        usersDom.innerHTML = users;
+        users0Dom.innerHTML = users0;
+        users1Dom.innerHTML = users1;
+    }
+
+    function deleteUser(){
+        online--;
+        onlineDom.innerHTML = online;
+    }
+</script>
+</html>

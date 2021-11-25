@@ -1,0 +1,60 @@
+version: "3.7"
+services:
+
+  redis:
+    image: redis:alpine
+    env_file: .env
+    depends_on:
+      - sockets0
+      - sockets1
+    expose:
+      - $REDISPORT
+    networks:
+      - streamLocal
+
+  sockets0:
+    env_file: .env
+    build:
+      context: ./sockets
+      dockerfile: Dockerfile
+    environment:
+    - SOCKETPORT=$SOCKETPORT
+    - SERVER=0
+    image: sockets-test-count
+    container_name: socket-0
+    restart: unless-stopped
+    expose:
+      - $SOCKETPORT
+    networks:
+      - streamLocal
+
+  sockets1:
+    env_file: .env
+    environment:
+    - SOCKETPORT=$SOCKETPORT
+    - SERVER=1
+    image: sockets-test-count
+    container_name: socket-1
+    restart: unless-stopped
+    expose:
+      - $SOCKETPORT
+    networks:
+      - streamLocal
+
+  webserver:
+    image: nginx:1.17.10
+    container_name: nginx
+    depends_on:
+      - sockets0
+      - sockets1
+    volumes:
+      - ./nginx/nodes/nginx.conf:/etc/nginx/nginx.conf
+      - ./nginx/www:/var/www/html
+    ports:
+      - 80:80
+    networks:
+      - streamLocal
+
+networks:
+  streamLocal:
+    driver: bridge

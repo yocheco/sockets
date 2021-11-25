@@ -1,0 +1,22 @@
+#Node
+node_modules
+.env
+dockerData
+
+#Angular
+# compiled output
+/dist
+/tmp
+/out-tsc
+/typings
+/src/environments/environment.prod.ts
+/src/environments/environment.ts
+
+
+# IDE - VSCode
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+.history/*
